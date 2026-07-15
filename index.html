@@ -5224,7 +5224,8 @@ function marksHandleFiles(files,slotIdx){
     if(__db){__db.style.display='inline-block';__db.textContent='✓ Uploaded — '+marksData.filter(d=>d.courses.length).length+' sheet(s)';}
     // do NOT auto-open the PDF in an iframe — a large/odd PDF in the browser plugin can freeze the tab.
     if(firstPdf!==null){const d2=marksData[firstPdf];if(d2)toast('✓ '+(d2.file||'sheet')+' parsed — '+(d2.courses?d2.courses.length:0)+' course(s). Commit to split.','success');}
-    setTimeout(()=>{if(typeof marksAutoAbsorb==='function')marksAutoAbsorb();},250);   // marksheet subjects flow into Table I automatically
+    // After upload, push parsed courses directly into the Annexure and open it
+    setTimeout(()=>{if(typeof marksCommitToAnnexure==='function')marksCommitToAnnexure();},250);
   };
   list.forEach(f=>{
     const nm=(f.name||'').toLowerCase();
@@ -5283,7 +5284,8 @@ function saveMarksPaste(){
   if(p.who)applyStudentFromSheet(p.who);                       // student details from pasted grade card too
   marksData[i]={label:lbl,semHint:hint,file:'(pasted text)',courses:p.courses,note:p.courses.length?'':'No course lines detected',blob:null,kind:'text',raw:document.getElementById('marksPasteText').value};
   closeMarksPaste();renderMarksPage();
-  setTimeout(()=>{if(typeof marksAutoAbsorb==='function')marksAutoAbsorb();},120);   // paste pushes directly to the Annexure, same as PDF upload
+  // Paste pushes directly to the Annexure (same as PDF upload)
+  setTimeout(()=>{if(typeof marksCommitToAnnexure==='function')marksCommitToAnnexure();},120);
 }
 let __mvUrl=null;
 var catDragIdx=null;
