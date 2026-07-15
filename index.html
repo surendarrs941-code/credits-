@@ -5783,6 +5783,8 @@ function renderAnnexureForm(){
   const t2=[...regFnp.map(s=>({code:s.code,name:s.name,L:s.L,T:s.T,P:s.P,C:s.credits,bk:s.basket,fix:s.id,grade:s.grade})),
             ...t2x.map(x=>({code:x.eq.newCode,name:x.eq.newName+' (old '+(x.c.code||x.c.name)+')',L:x.eq.newL,T:x.eq.newT,P:x.eq.newP,C:x.eq.newCredits,bk:(x.ns&&x.ns.basket)||x.eq.basket,fix:null}))];
   const addl=subjects.filter(s=>s.additional&&s.status!=='completed');
+  const t2Total=t2.reduce((a,x)=>a+(Number(x.C)||0),0);
+  const addlTotal=addl.reduce((a,s)=>a+(Number(s.credits)||0),0);
   const un=poolVisibleChips().filter(c=>!c.mappedEq);
   paper.innerHTML=`
   <div style="text-align:center;font-weight:700;font-size:15px;letter-spacing:.6px;margin-bottom:12px">Annexure – A
@@ -5806,7 +5808,7 @@ function renderAnnexureForm(){
   <h3>II. Failed/NP Graded Courses as per Old PRC (if any) <button class="chip-x" title="Add a failed/NP course" onclick="openAddFailed()">＋</button></h3>
   <table style="max-width:820px"><thead><tr><th style="width:36px">S.No</th><th>Course Code</th><th>Course Name</th><th colspan="4" style="text-align:center">Credit Structure<br/>L&nbsp;T&nbsp;P&nbsp;C</th><th>Course Basket</th></tr></thead><tbody>
     ${t2.map((x,i)=>`<tr ${x.fix?`draggable="true" ondragstart="dragSubjectId=${x.fix}"`:''}><td>${i+1}</td><td class="mono">${x.code||'—'}</td><td>${x.name}${x.grade?` <b style="color:#8b1a1a">(${x.grade})</b>`:''}${x.fix?` <button class="chip-x" title="Edit" onclick="editSubject(${x.fix})">✎</button> <button class="chip-x" title="Delete" onclick="deleteSubjectById(${x.fix})">✕</button>`:''}</td><td class="mono">${cell(x.L)||0}</td><td class="mono">${cell(x.T)||0}</td><td class="mono">${cell(x.P)||0}</td><td class="mono"><b>${x.C}</b></td><td><b>${x.bk||''}</b></td></tr>`).join('')||`<tr><td colspan="8" class="p-slot">none</td></tr>`}
-    <tr class="tot"><td colspan="6">Total Number of credits</td><td class="mono">${sum.C}</td><td></td></tr>
+    <tr class="tot"><td colspan="6">Total Credits</td><td class="mono">${t2Total}</td><td></td></tr>
   </tbody></table>
   <h3>III. Exemption of Course(s) (if any) in New PRC <button class="chip-x" title="Add an upcoming course to exempt against" onclick="openAddUpcoming()">＋</button></h3>
   <table><thead>
@@ -5820,7 +5822,7 @@ function renderAnnexureForm(){
   <h3>IV. Additional Course(s) (if any) <span style="font-weight:400;font-size:11px">— need to be completed to meet the requirements as per New (Readmitted) PRC</span> <button class="chip-x" onclick="openAddAdditional()" title="Add additional course">＋</button></h3>
   <table style="max-width:860px"><thead><tr><th style="width:36px">S.No</th><th>Course Code</th><th>Course Name</th><th colspan="4" style="text-align:center">Credit Structure L T P C</th><th>Semester in which it is offered/Basket</th></tr></thead><tbody>
     ${addl.map((s,i)=>`<tr class="dash-row-drag" draggable="true" ondragstart="dragSubjectId=${s.id}" title="Drag to 🗑 to remove from Table IV"><td>${i+1}</td><td class="mono">${s.code||'—'}</td><td>${s.name} <button class="chip-x" title="Edit" onclick="editSubject(${s.id})">✎</button> <button class="chip-x" title="Remove from Table IV" onclick="toggleAdditional(${s.id})">✕</button></td><td class="mono">${cell(s.L)||0}</td><td class="mono">${cell(s.T)||0}</td><td class="mono">${cell(s.P)||0}</td><td class="mono"><b>${s.credits}</b></td><td>S${s.sem} / ${s.basket||''}</td></tr>`).join('')||`<tr><td colspan="8" class="p-slot">none</td></tr>`}
-    <tr class="tot"><td colspan="6">Total Number of credits</td><td class="mono">${sum.E}</td><td></td></tr>
+    <tr class="tot"><td colspan="6">Total Credits</td><td class="mono">${addlTotal}</td><td></td></tr>
   </tbody></table>
   <h3>V. Courses not successfully completed and not part of the mapping, for removal from the transcript: <button class="chip-x" title="Add an old course for removal" onclick="openChipModal()">＋</button></h3>
   <table style="max-width:860px"><thead><tr><th style="width:36px">S.No</th><th>Course Code</th><th>Course Name</th><th colspan="4" style="text-align:center">Credit Structure L T P C</th><th>Semester in which it is offered/Basket</th></tr></thead><tbody>
